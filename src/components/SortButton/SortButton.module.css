@@ -1,0 +1,4 @@
+.tableSortIcons{
+    display: flex;
+    flex-direction: column;
+}
