@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import './App.module.css';
 import s from './App.module.css';
 import { useSelector } from 'react-redux';
 import { selectorError, selectorStatus, selectorToken } from '../store/app-reduser/app-selector';
 import { ErrorSnackbar } from '../components/ErrorSnackbar/ErrorSnackbar';
 import { AppBar, Button, LinearProgress, Toolbar } from '@material-ui/core';
-import { LoginForm } from '../components/LoginForm/LoginForm';
 import { Tasks } from '../pages/Tasks/Tasks';
+import { LoginFormDialog } from '../components/LoginFormDialog/LoginFormDialog';
 
 
 function App() {
@@ -16,9 +16,9 @@ function App() {
     const error = useSelector(selectorError);
     const [isFormDialog, setIsFormDialog] = React.useState<boolean>(false);
 
-    const loginHandler = () => {
+    const loginHandler = useCallback(() => {
         setIsFormDialog(true);
-    };
+    }, []);
 
     return (
         <div className={s.App}>
@@ -31,7 +31,7 @@ function App() {
                 {status === 'loading' && <LinearProgress color="secondary"/>}
             </AppBar>
             <Tasks/>
-            {isFormDialog && <LoginForm setIsFormDialog={setIsFormDialog}/>}
+            {isFormDialog && <LoginFormDialog setIsFormDialog={setIsFormDialog}/>}
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -17,25 +17,25 @@ const validationSchema = yup.object({
 });
 
 type FormDialogType = {
-    submitIsUpdateDialog: (isUpdate: boolean) => void,
+    changeTextDialogClose: (isUpdate: boolean) => void,
     text: string
     id: number
 }
 
-export const UpdateDialog = ({ id, submitIsUpdateDialog, text }: FormDialogType) => {
+export const ChangeTextDialog = React.memo(({ changeTextDialogClose, text, id }: FormDialogType) => {
 
     const dispatch = useDispatch();
 
-    const handleClose = () => {
-        submitIsUpdateDialog(false);
-    };
+    const handleClose = useCallback(() => {
+        changeTextDialogClose(false);
+    }, []);
 
     const formik = useFormik({
         initialValues: { text: text },
         validationSchema: validationSchema,
         onSubmit: async values => {
             await dispatch(updateTask(id, values.text, '1'));
-            submitIsUpdateDialog(true);
+            changeTextDialogClose(true);
             formik.resetForm();
         },
     });
@@ -61,4 +61,4 @@ export const UpdateDialog = ({ id, submitIsUpdateDialog, text }: FormDialogType)
             </Dialog>
         </div>
     );
-};
+});

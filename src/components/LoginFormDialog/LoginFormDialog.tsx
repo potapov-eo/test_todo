@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -28,13 +28,13 @@ type FormDialogType = {
     setIsFormDialog: (isFormDialog: boolean) => void
 }
 
-export const LoginForm = ({ setIsFormDialog }: FormDialogType) => {
+export const LoginFormDialog = React.memo(({ setIsFormDialog }: FormDialogType) => {
 
     const dispatch = useDispatch();
 
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
         setIsFormDialog(false);
-    };
+    }, []);
 
     const formik = useFormik({
         initialValues: initialValues,
@@ -75,4 +75,4 @@ export const LoginForm = ({ setIsFormDialog }: FormDialogType) => {
             </Dialog>
         </div>
     );
-};
+});

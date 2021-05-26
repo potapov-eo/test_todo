@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { getMe, setCurrentPage, taskStatusType } from '../../store/app-reduser/app-reducer';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -11,14 +11,14 @@ import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRo
 import { Pagination } from '@material-ui/lab';
 import { SortCardButton } from '../../components/SortButton/SortButton';
 import './Tasks.module.css';
-import { FormDialog } from '../../components/FormDialog/FormDialog';
 import s from './Tasks.module.css';
-import { UpdateDialog } from '../../components/UpdateDialog/UpdateDialog';
 import EditTwoToneIcon from '@material-ui/icons/EditTwoTone';
 import DoneOutlineIcon from '@material-ui/icons/DoneOutline';
-import { FormStatus } from '../../components/FormStatus/FormStatus';
+import { NewTaskDialog } from '../../components/NewTaskDialog/NewTaskDialog';
+import { ChangeStatusDialog } from '../../components/ChangeStatusDialog/ChangeStatusDialog';
+import { ChangeTextDialog } from '../../components/ChangeTextDialog/ChangeTextDialog';
 
-export const Tasks = () => {
+export const Tasks = React.memo(() => {
 
     const dispatch = useDispatch();
 
@@ -38,37 +38,40 @@ export const Tasks = () => {
         dispatch(getMe());
     }, [dispatch]);
 
-    const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    const CurrentPageChange = useCallback((event: React.ChangeEvent<unknown>, value: number) => {
         dispatch(setCurrentPage(value));
         dispatch(getMe());
-    };
-    const createNewTask = () => {
+    }, []);
+
+    const newTaskDialogCall = useCallback(() => {
         setIsFormDialog(true);
-    };
-    const closeFormDialogs = (isReload: boolean) => {
+    }, []);
+    const NewTaskDialogClose = useCallback((isUpdate: boolean) => {
         setIsFormDialog(false);
-        if (isReload === true) dispatch(getMe());
-    };
-    const updateTextTaskDialog = (id: number, text: string) => {
+        if (isUpdate === true) dispatch(getMe());
+    }, []);
+
+    const changeTextDialogCall = useCallback((id: number, text: string) => {
         setIsUpdateDialog(true);
         setUpdateTaskId(id);
         setUpdateTaskText(text);
-    };
-    const submitIsUpdateDialog = (isUpdate: boolean) => {
+    }, []);
+    const changeTextDialogClose = useCallback((isUpdate: boolean) => {
         setIsUpdateDialog(false);
         if (isUpdate === true) dispatch(getMe());
-    };
-    const closeFormStatus = (isReload: boolean) => {
-        setIsFormStatus(false);
-        if (isReload === true) dispatch(getMe());
-    };
+    }, []);
 
-    const updateStatusTaskDialog = (id: number, text: string, status: taskStatusType) => {
+    const changeStatusDialogCall = useCallback((id: number, text: string, status: taskStatusType) => {
         setIsFormStatus(true);
         setUpdateTaskId(id);
         setUpdateTaskText(text);
         setUpdateTaskStatus(status);
-    };
+    }, []);
+    const changeStatusDialogClose = useCallback((isUpdate: boolean) => {
+        setIsFormStatus(false);
+        if (isUpdate === true) dispatch(getMe());
+    }, []);
+
     return (<>
             <TableContainer>
                 <Table aria-label="simple table">
@@ -95,27 +98,32 @@ export const Tasks = () => {
                                 </TableCell>
                                 <TableCell align="center">
                                     {token && <EditTwoToneIcon color="secondary" className={s.iconText}
-                                                               onClick={() => updateTextTaskDialog(task.id, task.text)}/>}
+                                                               onClick={() => changeTextDialogCall(task.id, task.text)}/>}
                                     {task.text}
                                 </TableCell>
                                 <TableCell align="center" className={s.status}>
                                     {task.status}{token && ((task.status === 'задача не выполнена') || (task.status === 'задача не выполнена, отредактирована админом')) &&
                                 <DoneOutlineIcon className={s.statusIcon} color='secondary'
-                                                 onClick={() => updateStatusTaskDialog(task.id, task.text, task.status)}/>}
+                                                 onClick={() => changeStatusDialogCall(task.id, task.text, task.status)}/>}
                                 </TableCell>
 
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
-                <Pagination count={paginationCount} page={currentPage} onChange={handleChange} color='primary'/>
-                <Button variant={'outlined'} onClick={createNewTask}>ADD NEW TASK</Button>
+                <Pagination count={paginationCount} page={currentPage} onChange={CurrentPageChange} color='primary'/>
+                <Button variant={'outlined'} onClick={newTaskDialogCall}>ADD NEW TASK</Button>
             </TableContainer>
-            {isFormDialog && <FormDialog closeFormDialogs={closeFormDialogs}/>}
+
+            {isFormDialog &&
+            <NewTaskDialog NewTaskDialogClose={NewTaskDialogClose}/>}
+
             {isUpdateDialog &&
-            <UpdateDialog submitIsUpdateDialog={submitIsUpdateDialog} text={updateTaskText} id={updateTaskId}/>}
-            {isFormStatus && <FormStatus closeFormStatus={closeFormStatus}
-                                         text={updateTaskText} id={updateTaskId} status={updateTaskStatus}/>}
+            <ChangeTextDialog changeTextDialogClose={changeTextDialogClose}
+                              text={updateTaskText} id={updateTaskId}/>}
+            {isFormStatus &&
+            <ChangeStatusDialog changeStatusDialogClose={changeStatusDialogClose}
+                                text={updateTaskText} id={updateTaskId} status={updateTaskStatus}/>}
         </>
     );
-};
+});

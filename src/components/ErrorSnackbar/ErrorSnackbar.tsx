@@ -9,7 +9,7 @@ function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export function ErrorSnackbar() {
+export const ErrorSnackbar = React.memo(() => {
 
     const dispatch = useDispatch();
 
@@ -28,4 +28,4 @@ export function ErrorSnackbar() {
             </Alert>
         </Snackbar>
     );
-}
+})

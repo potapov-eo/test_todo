@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -11,10 +11,10 @@ import { useDispatch } from 'react-redux';
 
 
 const initialValues = {
-    userName: "",
-    email: "",
-    text: ""
-}
+    userName: '',
+    email: '',
+    text: '',
+};
 
 const validationSchema = yup.object({
     userName: yup
@@ -26,26 +26,28 @@ const validationSchema = yup.object({
         .required('это поле обязательно для заполнения'),
 });
 type FormDialogType = {
-    closeFormDialogs: (isReload: boolean) => void
+    NewTaskDialogClose: (isUpdate: boolean) => void
 }
 
 
-export const FormDialog = ({ closeFormDialogs }: FormDialogType) => {
+export const NewTaskDialog = React.memo(({ NewTaskDialogClose }: FormDialogType) => {
 
-    const dispatch = useDispatch()
-    const handleClose = () => {
-        closeFormDialogs(false);
-    };
+    const dispatch = useDispatch();
+
+    const handleClose = useCallback(() => {
+        NewTaskDialogClose(false);
+    }, []);
+
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
         onSubmit: async values => {
-            await dispatch(addTask(values))
-            closeFormDialogs(true)
-            formik.resetForm()
+            await dispatch(addTask(values));
+            NewTaskDialogClose(true);
+            formik.resetForm();
 
-        }
-    })
+        },
+    });
 
     return (
         <div>
@@ -70,7 +72,7 @@ export const FormDialog = ({ closeFormDialogs }: FormDialogType) => {
                             helperText={formik.touched.email && formik.errors.email}
                         /></div>
                         <div><TextField
-                            name={"text"}
+                            name={'text'}
                             value={formik.values.text}
                             placeholder={'text'}
                             onChange={formik.handleChange}
@@ -84,4 +86,4 @@ export const FormDialog = ({ closeFormDialogs }: FormDialogType) => {
             </Dialog>
         </div>
     );
-}
+});
