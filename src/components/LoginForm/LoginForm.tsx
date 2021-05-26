@@ -6,51 +6,50 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { addTask } from '../../store/app-reduser/app-reducer';
 import { useDispatch } from 'react-redux';
+import { login } from '../../store/app-reduser/app-reducer';
 
 
 const initialValues = {
-    userName: "",
-    email: "",
-    text: ""
-}
+    userName: 'admin',
+    password: '123',
+};
 
 const validationSchema = yup.object({
     userName: yup
         .string()
         .required('это поле обязательно для заполнения'),
-    email: yup.string().email('Invalid email').required('это поле обязательно для заполнения'),
-    text: yup
+    password: yup
         .string()
         .required('это поле обязательно для заполнения'),
 });
+
 type FormDialogType = {
-    closeFormDialogs: (isReload: boolean) => void
+    setIsFormDialog: (isFormDialog: boolean) => void
 }
 
+export const LoginForm = ({ setIsFormDialog }: FormDialogType) => {
 
-export const FormDialog = ({ closeFormDialogs }: FormDialogType) => {
+    const dispatch = useDispatch();
 
-    const dispatch = useDispatch()
     const handleClose = () => {
-        closeFormDialogs(false);
+        setIsFormDialog(false);
     };
+
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
         onSubmit: async values => {
-            await dispatch(addTask(values))
-            closeFormDialogs(true)
-            formik.resetForm()
-
-        }
-    })
+            await dispatch(login(values.userName, values.password));
+            setIsFormDialog(false);
+            formik.resetForm();
+        },
+    });
 
     return (
         <div>
             <Dialog open={true} onClose={handleClose} aria-labelledby='form-dialog-title'>
-                <DialogTitle id='form-dialog-title'>CREATE TASK</DialogTitle>
+                <DialogTitle id='form-dialog-title'>login</DialogTitle>
                 <DialogContent>
                     <form onSubmit={formik.handleSubmit}>
                         <div><TextField
@@ -62,26 +61,18 @@ export const FormDialog = ({ closeFormDialogs }: FormDialogType) => {
                             helperText={formik.touched.userName && formik.errors.userName}
                         /></div>
                         <div><TextField
-                            name={'email'}
-                            value={formik.values.email}
-                            placeholder={'email'}
+                            name={'password'}
+                            value={formik.values.password}
+                            placeholder={'password'}
                             onChange={formik.handleChange}
-                            error={formik.touched.email && Boolean(formik.errors.email)}
-                            helperText={formik.touched.email && formik.errors.email}
-                        /></div>
-                        <div><TextField
-                            name={"text"}
-                            value={formik.values.text}
-                            placeholder={'text'}
-                            onChange={formik.handleChange}
-                            error={formik.touched.text && Boolean(formik.errors.text)}
-                            helperText={formik.touched.text && formik.errors.text}
+                            error={formik.touched.password && Boolean(formik.errors.password)}
+                            helperText={formik.touched.password && formik.errors.password}
                         /></div>
                         <Button variant='outlined' onClick={handleClose}>Cancel</Button>
-                        <Button variant='outlined' type='submit'>CREATE</Button>
+                        <Button variant='outlined' type='submit'>Login</Button>
                     </form>
                 </DialogContent>
             </Dialog>
         </div>
     );
-}
+};

@@ -1,0 +1,14 @@
+.App {
+    text-align: center;
+    height: 100vh;
+}
+
+h2 {
+    margin: 10px;
+}
+
+.ErrorSnackbar {
+    position: absolute;
+    top: 20px;
+}
+

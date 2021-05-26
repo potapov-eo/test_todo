@@ -1,4 +1,5 @@
-.tableSortIcons{
+.tableSortIcons {
     display: flex;
     flex-direction: column;
+    cursor: pointer;
 }

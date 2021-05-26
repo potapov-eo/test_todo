@@ -1,18 +1,28 @@
 import {
     AppInitialStateType,
     appReducer,
-    setAppError,
-    setAppStatus,
-} from "./app-reducer";
+    RequestStatusType,
+    setAppStatus, setCurrentPage,
+    sortFieldType,
+    taskType,
+} from './app-reducer';
 
 
 let startState: AppInitialStateType
 
 
 beforeEach(() => {
-    startState = {
-        status: 'succeeded',
-        error: null,
+    startState =  {
+        status: 'succeeded' as RequestStatusType,
+        error: null as string | null,
+        tasks: [] as Array<taskType>,
+        totalTaskCount: 0,
+        getMeData: {
+            page: 1,
+            sort_field: '' as sortFieldType,
+            sort_direction: '' as 'asc' | 'desc',
+        },
+        token: '',
     }
 
 });
@@ -24,14 +34,22 @@ test('correct status should be added', () => {
 
     expect(endState.status).toBe("loading");
 })
-test('correct error should be added', () => {
-    const action = setAppError("something wrong");
+test('correct current page should be added', () => {
+    const action = setCurrentPage(7);
 
     const endState = appReducer(startState, action)
 
     expect(endState).toEqual(
         {
-            error: 'something wrong',
-            status: 'succeeded',
+            status: 'succeeded' as RequestStatusType,
+            error: null as string | null,
+            tasks: [] as Array<taskType>,
+            totalTaskCount: 0,
+            getMeData: {
+                page: 7,
+                sort_field: '' as sortFieldType,
+                sort_direction: '' as 'asc' | 'desc',
+            },
+            token: '',
         })
 })

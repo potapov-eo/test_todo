@@ -1,5 +1,22 @@
-h2{
+h2 {
     display: flex;
     justify-content: center;
     align-items: center;
+    word-wrap: break-word;
+}
+
+.text {
+    min-width: 300px;
+}
+
+.status {
+    min-width: 180px;
+}
+
+.iconText {
+    cursor: pointer
+}
+
+.statusIcon {
+    cursor: pointer;
 }
