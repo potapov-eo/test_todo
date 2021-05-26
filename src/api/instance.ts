@@ -5,7 +5,7 @@ export const baseURL = 'https://uxcandy.com/~shapoval/test-task-backend/v2/';
 
 export const instance = axios.create({ baseURL, headers: { 'Content-Type': 'multipart/form-data' } });
 
-export const Name = 'JON';
+export const Name = 'EvgenyPotapov';
 
 export const AuthAPI = {
     login(username: string, password: string) {
